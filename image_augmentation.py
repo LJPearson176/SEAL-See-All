@@ -3,7 +3,7 @@ from imgaug import augmenters as iaa
 import os
 
 # Path to the image folder
-image_folder = "/Users/ljp176/Downloads/faces"
+image_folder = "destination/pathway/folder"
 
 # Define augmentation sequence
 seq = iaa.Sequential([

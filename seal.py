@@ -27,7 +27,7 @@ hands = mp_hands.Hands(static_image_mode=False,
 mp_drawing = mp.solutions.drawing_utils
 
 # Directory for saving OCR images
-ocr_images_dir = '/Users/ljp176/brio/ocr_images'
+ocr_images_dir = '/ocr_results'
 os.makedirs(ocr_images_dir, exist_ok=True)
 
 # Function to perform OCR
@@ -52,22 +52,23 @@ def perform_ocr(frame, box):
     return text
 
 # Load YOLO model
-net = cv2.dnn.readNetFromDarknet('/Users/ljp176/Desktop/yolo-coco/yolov3.cfg', 
-                                 '/Users/ljp176/Desktop/yolo-coco/yolov3.weights')
+net = cv2.dnn.readNetFromDarknet('/yolo/yolov3.cfg', 
+                                 '/yolo/yolov3.weights')
 layer_names = net.getLayerNames()
 output_layer_ids = net.getUnconnectedOutLayers()
 output_layers = [layer_names[i - 1] for i in output_layer_ids.flatten()]
 
 # Load COCO class names
-with open('/Users/ljp176/Desktop/yolo-coco/coco.names', 'r') as f:
+with open('/yolo/coco.names', 'r') as f:
     classes = [line.strip() for line in f.readlines()]
 
 # Initialize Haar Cascade for face detection
-face_cascade = cv2.CascadeClassifier('/Users/ljp176/anaconda3/lib/python3.10/site-packages/cv2/data/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('/haar/haarcascade_frontalface_default.xml')
 
 # Try loading known face encodings
 try:
-    with open('/Users/ljp176/brio/face_encodings1.pkl', 'rb') as file:
+    #update file name for known facial encodings#
+    with open('/facial_encodings/face_encodings1.pkl', 'rb') as file:
         known_encodings = pickle.load(file)
 except FileNotFoundError:
     known_encodings = []
@@ -105,7 +106,7 @@ def execute_script(script_path):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while executing the script: {e}")    
 
-script_path = '/Users/ljp176/Desktop/brio/signout.py'
+script_path = '/gesture_execution_scripts/' #add .py script here
 
 def handle_victory():
     print("Victory gesture recognized. Executing script...")
@@ -168,7 +169,7 @@ def handle_gesture(gesture_name):
 
 
 # Load gesture recognizer model and set up options
-model_path = '/Users/ljp176/Downloads/gesture_recognizer.task'
+model_path = 'gesture_recognizer/gesture_recognizer.task'
 base_options = mp.tasks.BaseOptions(model_asset_path=model_path)
 options = mp.tasks.vision.GestureRecognizerOptions(
     base_options=base_options,
@@ -186,7 +187,7 @@ yolo_enabled = False
 
 
 # Open a CSV file to write OCR results
-csv_file_path = '/Users/ljp176/brio/ocr_results1.csv'
+csv_file_path = '/ocr_results/ocr_results1.csv'
 csv_file = open(csv_file_path, 'w', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Time', 'Object Type', 'Confidence Score', 'OCR Text', 'Box Coordinates', 'Image Path'])
